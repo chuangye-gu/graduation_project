@@ -1,0 +1,502 @@
+C51 COMPILER V9.54   TEST                                                                  04/17/2020 14:27:44 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TEST
+OBJECT MODULE PLACED IN test.OBJ
+COMPILER INVOKED BY: D:\KEIL\Keil C51\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include<reg52.h>
+   2          #include<math.h>
+   3          /*==============*/
+   4          #include<intrins.h>
+   5          #define uint unsigned int
+   6          #define uchar unsigned char
+   7          #define ui unsigned int
+   8          #define uc unsigned char
+   9          uchar lcd[]="0123456789";
+  10          uchar A1,A2,A3;/*==============*/
+  11          sbit rd=P1^6; //IO???
+  12          sbit wr=P1^7;
+  13          sbit cs=P1^5;
+  14          sbit A=P2^0;
+  15          sbit BB=P2^1;
+  16          sbit C=P2^2;
+  17          sbit D=P2^4;
+  18          
+  19          /*==============*/
+  20           float R;
+  21           float Kp;
+  22           float T;
+  23           float Ti;
+  24           float Td;
+  25           float Pt;
+  26           float Ek;
+  27           float Ek_1;
+  28           float SEk;
+  29            float u;
+  30           float u0 = 1;
+  31          
+  32          ui summer;
+  33          
+  34          //sbit bj=P2^4;              //低电平报警模块工作
+  35          sbit lcden=P2^7;             //LCD E
+  36          sbit lcdrs=P2^6;             //LCD  RS
+  37          sbit lcdrw=P2^5; //            //LCD RW
+  38          sbit control=P2^3;             //加热模块相关。低电平启动
+  39          char lshi,lge,hshi,hge;
+  40          uc num,flag;
+  41          ui temp;
+  42          sbit dsio=P3^7;             //DS18B20输入口
+  43          //延时
+  44          void delay(ui z)
+  45          {
+  46   1        uc x,y;
+  47   1        for(x=z;x>0;x--)
+  48   1          for(y=110;y>0;y--);
+  49   1      }
+  50          void sm_delay(ui z)
+  51          {
+  52   1        uc x,y,t;
+  53   1        for(x=z;x>0;x--)
+  54   1          for(y=110;y>0;y--)
+  55   1            for(t=30;t>0;t--);
+C51 COMPILER V9.54   TEST                                                                  04/17/2020 14:27:44 PAGE 2   
+
+  56   1      }
+  57          //DS18B20控制
+  58          void dsinit()
+  59          {
+  60   1        uc i;
+  61   1        dsio=0;
+  62   1        i=70;
+  63   1        while(i--);
+  64   1        dsio=1;
+  65   1        i=4;
+  66   1        while(i--);
+  67   1      }
+  68          void dswritebyte(uc dat)
+  69          {
+  70   1        uc i,j;
+  71   1        for(j=0;j<8;j++)
+  72   1        {
+  73   2          dsio=0;
+  74   2          i++;
+  75   2          dsio=dat&0x01;
+  76   2          i=6;
+  77   2          while(i--);
+  78   2          dsio=1;
+  79   2          dat>>=1;
+  80   2        }
+  81   1      }
+  82          uc dsreadbyte()
+  83          {
+  84   1        uc i,j,byte,b;
+  85   1        for(j=0;j<8;j++)
+  86   1        {
+  87   2          dsio=0;
+  88   2          i++;
+  89   2          dsio=1;
+  90   2          i++;i++;
+  91   2          b=dsio;
+  92   2          byte=(byte>>1)|(b<<7);
+  93   2          i=4;
+  94   2          while(i--);
+  95   2        }
+  96   1        return byte;
+  97   1      }
+  98          void dschangetemp()
+  99          {
+ 100   1        dsinit();
+ 101   1        delay(1);
+ 102   1        dswritebyte(0xcc);
+ 103   1        dswritebyte(0x44);
+ 104   1      
+ 105   1      }
+ 106          void dsreadtemp()
+ 107          {
+ 108   1        dsinit();
+ 109   1        delay(1);
+ 110   1        dswritebyte(0xcc);
+ 111   1        dswritebyte(0xbe);
+ 112   1      }
+ 113          ui gettemp()
+ 114          {
+ 115   1        int temp;
+ 116   1        uc h,l;
+ 117   1        dschangetemp();
+C51 COMPILER V9.54   TEST                                                                  04/17/2020 14:27:44 PAGE 3   
+
+ 118   1        dsreadtemp();
+ 119   1        l=dsreadbyte();
+ 120   1        h=dsreadbyte();
+ 121   1        temp=h;
+ 122   1        temp<<=8;
+ 123   1        temp|=l;
+ 124   1        temp=temp*0.0625*100+0.5;
+ 125   1        return temp;
+ 126   1      }
+ 127          //LCD控制程序
+ 128          void lcdwritecom(uc com)
+ 129          {
+ 130   1        lcdrs=0;
+ 131   1        P0=com;
+ 132   1        delay(10);
+ 133   1        lcden=1;
+ 134   1        delay(10);
+ 135   1        lcden=0;
+ 136   1      }
+ 137          void lcdwritedata(uc date)
+ 138          {
+ 139   1        lcdrs=1;
+ 140   1        P0=date;
+ 141   1        delay(10);
+ 142   1        lcden=1;
+ 143   1        delay(10);
+ 144   1        lcden=0;
+ 145   1      }
+ 146          void lcdinit()
+ 147          {
+ 148   1        lcdrw=0;
+ 149   1        lcden=0;
+ 150   1        lcdwritecom(0x38);
+ 151   1        lcdwritecom(0x0c);
+ 152   1        lcdwritecom(0x06);
+ 153   1        lcdwritecom(0x01);
+ 154   1      }
+ 155          //LCD显示
+ 156          void lcddisplay(int temp)
+ 157          {
+ 158   1        ui  tab[]={0,0,0,-2,0,0};
+ 159   1        lcdwritecom(0x80);
+ 160   1        lcdwritedata('+');
+ 161   1        tab[0]=temp/10000;
+ 162   1        tab[1]=temp%10000/1000;
+ 163   1        tab[2]=temp%1000/100;
+ 164   1        tab[4]=temp%100/10;
+ 165   1        tab[5]=temp%10;
+ 166   1        lcdwritecom(0x81);
+ 167   1        for(num=0;num<6;num++)
+ 168   1        {
+ 169   2          lcdwritedata('0'+tab[num]);
+ 170   2        }
+ 171   1      }
+ 172          
+ 173          void adjust()
+ 174          {
+ 175   1        delay(100);
+ 176   1        flag++;
+ 177   1        if(flag==5)flag=1;
+ 178   1        if(flag==1)
+ 179   1        {
+C51 COMPILER V9.54   TEST                                                                  04/17/2020 14:27:44 PAGE 4   
+
+ 180   2          lcdwritecom(0x80+0x44);
+ 181   2          lcdwritecom(0x0f);  
+ 182   2         }
+ 183   1         if(flag==2)
+ 184   1        {
+ 185   2          lcdwritecom(0x80+0x45);
+ 186   2          lcdwritecom(0x0f);  
+ 187   2         }
+ 188   1        if(flag==3)
+ 189   1        {
+ 190   2          lcdwritecom(0x80+0x47);
+ 191   2          lcdwritecom(0x0f);  
+ 192   2         }
+ 193   1        if(flag==4)
+ 194   1        {
+ 195   2          lcdwritecom(0x80+0x48);
+ 196   2          lcdwritecom(0x0f);  
+ 197   2         }
+ 198   1      }
+ 199          void inc()
+ 200          {
+ 201   1        delay(100);
+ 202   1        switch(flag)
+ 203   1        {
+ 204   2          case 1:lshi++; if(lshi==10)lshi=0;
+ 205   2                  lcdwritedata('0'+lshi);
+ 206   2                  lcdwritecom(0x10);
+ 207   2                  break;
+ 208   2          case 2:lge++; if(lge==10)lge=0;
+ 209   2                  lcdwritedata('0'+lge);
+ 210   2                  lcdwritecom(0x10);
+ 211   2                  break;
+ 212   2          case 3:hshi++; if(hshi==10)hshi=0;
+ 213   2                  lcdwritedata('0'+hshi);
+ 214   2                  lcdwritecom(0x10);
+ 215   2                  break;
+ 216   2          case 4:hge++; if(hge==10)hge=0;
+ 217   2                  lcdwritedata('0'+hge);
+ 218   2                  lcdwritecom(0x10);
+ 219   2                  break;
+ 220   2        }
+ 221   1      }
+ 222          void dec()
+ 223          {
+ 224   1        delay(100);
+ 225   1        switch(flag)
+ 226   1        {
+ 227   2          case 1:lshi--; if(lshi<0)lshi=9;
+ 228   2                  lcdwritedata('0'+lshi);
+ 229   2                  lcdwritecom(0x10);
+ 230   2                  break;
+ 231   2          case 2:lge--; if(lge<0)lge=9;
+ 232   2                  lcdwritedata('0'+lge);
+ 233   2                  lcdwritecom(0x10);
+ 234   2                  break;
+ 235   2          case 3:hshi--; if(hshi<0)hshi=9;
+ 236   2                  lcdwritedata('0'+hshi);
+ 237   2                   lcdwritecom(0x10);
+ 238   2                  break;
+ 239   2          case 4:hge--; if(hge<0)hge=9;
+ 240   2                  lcdwritedata('0'+hge);
+ 241   2                   lcdwritecom(0x10);
+C51 COMPILER V9.54   TEST                                                                  04/17/2020 14:27:44 PAGE 5   
+
+ 242   2                  break;
+ 243   2        }
+ 244   1      }
+ 245          //键盘扫描
+ 246          void keyscan()
+ 247          {
+ 248   1        uc test,num;
+ 249   1        num=0;
+ 250   1        test=P1;
+ 251   1        if(test!=0xff)
+ 252   1        delay(5);
+ 253   1        test=P1;
+ 254   1        if(test==0xf7)
+ 255   1        
+ 256   1        {
+ 257   2          while(P1!=0xff);
+ 258   2          num++;
+ 259   2          while(1)
+ 260   2          {
+ 261   3            test=P1;
+ 262   3            if(test!=0xff)
+ 263   3            delay(5);
+ 264   3            test=P1;
+ 265   3            if(test!=0xff)
+ 266   3            {
+ 267   4              if(test==0xf7)
+ 268   4                num++;
+ 269   4                if(num==2)
+ 270   4                { lcdwritecom(0x0c);
+ 271   5                  break;}
+ 272   4              switch(test)
+ 273   4              {
+ 274   5                case 0xfe:adjust(); 
+ 275   5                    break;
+ 276   5                case 0xfd:inc();
+ 277   5                    break;
+ 278   5                case 0xfb:dec();
+ 279   5                    break;
+ 280   5              }
+ 281   4            }
+ 282   3            while(P1!=0xff);
+ 283   3          
+ 284   3          }
+ 285   2          }
+ 286   1      }
+ 287          //PID
+ 288          void PIDinit()
+ 289          {
+ 290   1            
+ 291   1        Kp=10;
+ 292   1        Ti=100000;
+ 293   1        Td=1000;
+ 294   1        T=50;
+ 295   1        R=60;
+ 296   1        Pt = 100;
+ 297   1      
+ 298   1      }
+ 299          
+ 300          /*==============*/
+ 301          uchar read_adc0804()//?????adc0804??????
+ 302          {
+ 303   1        char b=0;
+C51 COMPILER V9.54   TEST                                                                  04/17/2020 14:27:44 PAGE 6   
+
+ 304   1        uchar a;          //??????,????
+ 305   1        cs=1;
+ 306   1        wr=1;
+ 307   1        cs=0;
+ 308   1        wr=0;
+ 309   1        _nop_();
+ 310   1        wr=1;
+ 311   1        
+ 312   1        P3=0xff;         //?????????
+ 313   1        rd=1;
+ 314   1        rd=0;
+ 315   1        _nop_();
+ 316   1        a=P3;
+ 317   1        rd=1;
+ 318   1        cs=1; 
+ 319   1      
+ 320   1        a=a/2;
+ 321   1      
+ 322   1       return a;
+ 323   1      }
+ 324          /*==============*/
+ 325          void PIDdeal()
+ 326          {
+ 327   1        float Ek;
+ 328   1        float Po,Io,Do;
+ 329   1        
+ 330   1        float Ki;
+ 331   1        float Kd;
+ 332   1        float EK;
+ 333   1        
+ 334   1        Ek=R-summer; 
+ 335   1        
+ 336   1        SEk+=Ek;
+ 337   1        Po=Kp*Ek;      
+ 338   1        Ki = (T/Ti);
+ 339   1        Ki = Ki*Kp;
+ 340   1        Io=Ki*SEk;  
+ 341   1      
+ 342   1        Kd = (Td/T);
+ 343   1        Kd = Kd*Kp;
+ 344   1        EK = Ek-Ek_1;
+ 345   1        Do=Kd*EK;
+ 346   1      
+ 347   1        u= Po+Io+Do;
+ 348   1        Ek_1=Ek;
+ 349   1        
+ 350   1      
+ 351   1         if(u>Pt)
+ 352   1         {
+ 353   2          u=Pt;
+ 354   2         }else if(u==0)
+ 355   1         {
+ 356   2          u=u0; 
+ 357   2         }else if(u<-100)
+ 358   1         {
+ 359   2            u=-100;
+ 360   2         }
+ 361   1      }
+ 362          
+ 363          void stepping_motor()
+ 364          {
+ 365   1          if(u>=0) return ;
+C51 COMPILER V9.54   TEST                                                                  04/17/2020 14:27:44 PAGE 7   
+
+ 366   1          control=1;
+ 367   1          D=0;
+ 368   1          A=1;
+ 369   1          sm_delay(10000);
+ 370   1          A=0;
+ 371   1          BB=1;
+ 372   1          sm_delay(10000);
+ 373   1          BB=0;
+ 374   1          C=1;
+ 375   1          sm_delay(10000);
+ 376   1          C=0;
+ 377   1          D=1;
+ 378   1          sm_delay(10000);
+ 379   1      }
+ 380          void pwm()
+ 381          {
+ 382   1        static uc i;
+ 383   1        if(u<0) return ;
+ 384   1      
+ 385   1        i++; 
+ 386   1        
+ 387   1        if(i>Pt)
+ 388   1        {
+ 389   2          i = 0;  
+ 390   2        } 
+ 391   1        if(i < u)
+ 392   1        {
+ 393   2          control=0;
+ 394   2        } else if(i>u){
+ 395   2          control=1;
+ 396   2        };
+ 397   1      }
+ 398          
+ 399          void main()
+ 400          {
+ 401   1        TMOD=0x01;
+ 402   1        TH0=(65535-10900)/256;
+ 403   1        TL0=(65535-10900)%256;
+ 404   1        ET0=1;
+ 405   1        TR0=1;
+ 406   1        EA=1;
+ 407   1        PIDinit();
+ 408   1        lcdinit();
+ 409   1        while(1)
+ 410   1        {   
+ 411   2          summer=read_adc0804();
+ 412   2          PIDdeal();
+ 413   2          stepping_motor();
+ 414   2          A1=summer/100; 
+ 415   2          A2=summer%100/10;
+ 416   2          A3=summer%10;
+ 417   2          lcdwritecom(0x80);
+ 418   2          lcdwritedata(lcd[A1]);
+ 419   2          lcdwritecom(0x81);
+ 420   2          lcdwritedata(lcd[A2]);
+ 421   2          lcdwritecom(0x82);
+ 422   2          lcdwritedata(lcd[A3]);
+ 423   2          if(u>=0){
+ 424   3            A1=(unsigned int)u/100;
+ 425   3            A2=(unsigned int)u%100/10;
+ 426   3            A3=(unsigned int)u%10;
+ 427   3            lcdwritecom(0x80+0X40);
+C51 COMPILER V9.54   TEST                                                                  04/17/2020 14:27:44 PAGE 8   
+
+ 428   3            lcdwritedata(0x10);
+ 429   3            lcdwritecom(0x81+0X40);
+ 430   3            lcdwritedata(lcd[A1]);
+ 431   3            lcdwritecom(0x82+0X40);
+ 432   3            lcdwritedata(lcd[A2]);
+ 433   3            lcdwritecom(0x83+0X40);
+ 434   3            lcdwritedata(lcd[A3]);
+ 435   3          }
+ 436   2          else{
+ 437   3            A1=(unsigned int)u/100;
+ 438   3            A2=(unsigned int)u%100/10;
+ 439   3            A3=(unsigned int)u%10;
+ 440   3            lcdwritecom(0x80+0X40);
+ 441   3            lcdwritedata(0x2d);
+ 442   3            lcdwritecom(0x81+0X40);
+ 443   3            lcdwritedata(lcd[A1]);
+ 444   3            lcdwritecom(0x82+0X40);
+ 445   3            lcdwritedata(lcd[A2]);
+ 446   3            lcdwritecom(0x83+0X40);
+ 447   3            lcdwritedata(lcd[A3]);
+ 448   3          }
+ 449   2        //   keyscan() ;
+ 450   2        // while(1);
+ 451   2        
+ 452   2        }
+ 453   1      }
+ 454          
+ 455          void t0() interrupt 1
+ 456          { 
+ 457   1        TH0=(65535-10900)/256;
+ 458   1        TL0=(65535-10900)%256;
+ 459   1        
+ 460   1        
+ 461   1        pwm();
+ 462   1        
+ 463   1        EA=1;
+ 464   1      }
+ 465          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1787    ----
+   CONSTANT SIZE    =     12    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     69      41
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -12,7 +12,9 @@ typedef struct
 	float Ti;
 	float Td; 
 	
-	
+	float K1;
+	float K2;
+	float K3;
 	
 	float Ek;  //本次偏差
 	float Ek_1;//上次偏差
