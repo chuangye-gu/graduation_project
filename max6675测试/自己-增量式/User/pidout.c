@@ -8,6 +8,7 @@ void PIDOUT_init()//pid输出脚初始化
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
+	pwmout_1;
 }
 
 void PID_out()  //输出PID运算结果到负载---每1ms被调用1次

@@ -39,7 +39,7 @@ u16 read_max6675()  //????
   return d;
 }
 
-void read_temper()//??????
+void read_temper()//
 {
   u16 d;
 	static u16 samtim;
@@ -48,7 +48,15 @@ void read_temper()//??????
 	  return ;
 	
   d=read_max6675();
-  pid.Pv=((d>>4)&0x0fff)*0.25;//????  
+	/***************************/
+  pid.Pv=((d>>4)&0x0fff)*0.25;
+	/***************************/
+	//pid.Pv += 25;
+////	pid.Pv /= 25;
+//	pid.Pv *= 25;
+//	pid.Pv = d / 819.0;
+//	pid.Pv /= 4;
+	/***************************/
 //	pid.Pv=50;
 	samtim=0;	
 	/*//  u16 d;

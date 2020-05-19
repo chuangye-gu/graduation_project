@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MIAN                                                                  05/12/2020 19:53:09 PAGE 1   
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MIAN
@@ -24,476 +24,506 @@ line level    source
   15          sbit C=P2^2;
   16          sbit D=P2^4;
   17          
-  18          /*==============*/
-  19           float R;
-  20           float Kp;
-  21           float T;
-  22           float Ti;
-  23           float Td;
-  24           float Pt;
-  25           float Ek;
-  26           float Ek_1;
-  27           float SEk;
-  28           float u;
-  29           float u0 = 1;
-  30          
-  31          ui summer;
-  32          
-  33          //sbit bj=P2^4;              //低电平报警模块工作
-  34          sbit lcden=P2^7;             //LCD E
-  35          sbit lcdrs=P2^6;             //LCD  RS
-  36          sbit lcdrw=P2^5; //            //LCD RW
-  37          sbit control=P2^3;             //加热模块相关。低电平启动
-  38          char lshi,lge,hshi,hge;
-  39          uc num,flag;
-  40          ui temp;
-  41          sbit dsio=P3^7;             //DS18B20输入口
-  42          //延时
-  43          void delay(ui z)
-  44          {
-  45   1        uc x,y;
-  46   1        for(x=z;x>0;x--)
-  47   1          for(y=110;y>0;y--);
-  48   1      }
-  49          void sm_delay(ui z)
-  50          {
-  51   1        uc x,y,t;
-  52   1        for(x=z;x>0;x--)
-  53   1          for(y=110;y>0;y--)
-  54   1            for(t=30;t>0;t--);
-  55   1      }
-C51 COMPILER V9.54   MIAN                                                                  05/12/2020 19:53:09 PAGE 2   
+  18          sbit k0 = P1^0;
+  19          sbit k1 = P1^1;
+  20          sbit k2 = P1^2;
+  21          sbit k3 = P1^3;
+  22          
+  23           float R;
+  24           float Kp;
+  25           float T;
+  26           float Ti;
+  27           float Td;
+  28           float Pt;
+  29           float Ek;
+  30           float Ek_1;
+  31           float SEk;
+  32           float u;
+  33           float u0 = 1;
+  34          
+  35          ui summer;
+  36          
+  37          //sbit bj=P2^4;              //低电平报警模块工作
+  38          sbit lcden=P2^7;             //LCD E
+  39          sbit lcdrs=P2^6;             //LCD  RS
+  40          sbit lcdrw=P2^5; //            //LCD RW
+  41          sbit control=P2^3;             //加热模块相关。低电平启动
+  42          char lshi,lge,hshi,hge;
+  43          uc num,flag;
+  44          ui temp;
+  45          sbit dsio=P3^7;             //DS18B20输入口
+  46          //延时
+  47          void delay(ui z)
+  48          {
+  49   1        uc x,y;
+  50   1        for(x=z;x>0;x--)
+  51   1          for(y=110;y>0;y--);
+  52   1      }
+  53          void sm_delay(ui z)
+  54          {
+  55   1        uc x,y,t;
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 2   
 
-  56          //DS18B20控制
-  57          void dsinit()
-  58          {
-  59   1        uc i;
-  60   1        dsio=0;
-  61   1        i=70;
-  62   1        while(i--);
-  63   1        dsio=1;
-  64   1        i=4;
-  65   1        while(i--);
-  66   1      }
-  67          void dswritebyte(uc dat)
-  68          {
-  69   1        uc i,j;
-  70   1        for(j=0;j<8;j++)
-  71   1        {
-  72   2          dsio=0;
-  73   2          i++;
-  74   2          dsio=dat&0x01;
-  75   2          i=6;
-  76   2          while(i--);
-  77   2          dsio=1;
-  78   2          dat>>=1;
-  79   2        }
-  80   1      }
-  81          uc dsreadbyte()
-  82          {
-  83   1        uc i,j,byte,b;
-  84   1        for(j=0;j<8;j++)
-  85   1        {
-  86   2          dsio=0;
-  87   2          i++;
-  88   2          dsio=1;
-  89   2          i++;i++;
-  90   2          b=dsio;
-  91   2          byte=(byte>>1)|(b<<7);
-  92   2          i=4;
-  93   2          while(i--);
-  94   2        }
-  95   1        return byte;
-  96   1      }
-  97          void dschangetemp()
-  98          {
-  99   1        dsinit();
- 100   1        delay(1);
- 101   1        dswritebyte(0xcc);
- 102   1        dswritebyte(0x44);
- 103   1      
- 104   1      }
- 105          void dsreadtemp()
- 106          {
- 107   1        dsinit();
- 108   1        delay(1);
- 109   1        dswritebyte(0xcc);
- 110   1        dswritebyte(0xbe);
- 111   1      }
- 112          ui gettemp()
- 113          {
- 114   1        int temp;
- 115   1        uc h,l;
- 116   1        dschangetemp();
- 117   1        dsreadtemp();
-C51 COMPILER V9.54   MIAN                                                                  05/12/2020 19:53:09 PAGE 3   
+  56   1        for(x=z;x>0;x--)
+  57   1          for(y=110;y>0;y--)
+  58   1            for(t=30;t>0;t--);
+  59   1      }
+  60          //DS18B20控制
+  61          void dsinit()
+  62          {
+  63   1        uc i;
+  64   1        dsio=0;
+  65   1        i=70;
+  66   1        while(i--);
+  67   1        dsio=1;
+  68   1        i=4;
+  69   1        while(i--);
+  70   1      }
+  71          void dswritebyte(uc dat)
+  72          {
+  73   1        uc i,j;
+  74   1        for(j=0;j<8;j++)
+  75   1        {
+  76   2          dsio=0;
+  77   2          i++;
+  78   2          dsio=dat&0x01;
+  79   2          i=6;
+  80   2          while(i--);
+  81   2          dsio=1;
+  82   2          dat>>=1;
+  83   2        }
+  84   1      }
+  85          uc dsreadbyte()
+  86          {
+  87   1        uc i,j,byte,b;
+  88   1        for(j=0;j<8;j++)
+  89   1        {
+  90   2          dsio=0;
+  91   2          i++;
+  92   2          dsio=1;
+  93   2          i++;i++;
+  94   2          b=dsio;
+  95   2          byte=(byte>>1)|(b<<7);
+  96   2          i=4;
+  97   2          while(i--);
+  98   2        }
+  99   1        return byte;
+ 100   1      }
+ 101          void dschangetemp()
+ 102          {
+ 103   1        dsinit();
+ 104   1        delay(1);
+ 105   1        dswritebyte(0xcc);
+ 106   1        dswritebyte(0x44);
+ 107   1      
+ 108   1      }
+ 109          void dsreadtemp()
+ 110          {
+ 111   1        dsinit();
+ 112   1        delay(1);
+ 113   1        dswritebyte(0xcc);
+ 114   1        dswritebyte(0xbe);
+ 115   1      }
+ 116          ui gettemp()
+ 117          {
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 3   
 
- 118   1        l=dsreadbyte();
- 119   1        h=dsreadbyte();
- 120   1        temp=h;
- 121   1        temp<<=8;
- 122   1        temp|=l;
- 123   1        temp=temp*0.0625*100+0.5;
- 124   1        return temp;
- 125   1      }
- 126          
- 127          void lcdwritecom(uc com)
- 128          {
- 129   1        lcdrs=0;
- 130   1        P0=com;
- 131   1        delay(10);
- 132   1        lcden=1;
- 133   1        delay(10);
- 134   1        lcden=0;
- 135   1      }
- 136          void lcdwritedata(uc date)
- 137          {
- 138   1        lcdrs=1;
- 139   1        P0=date;
- 140   1        delay(10);
- 141   1        lcden=1;
- 142   1        delay(10);
- 143   1        lcden=0;
- 144   1      }
- 145          void lcdinit()
- 146          {
- 147   1        lcdrw=0;
- 148   1        lcden=0;
- 149   1        lcdwritecom(0x38);
- 150   1        lcdwritecom(0x0c);
- 151   1        lcdwritecom(0x06);
- 152   1        lcdwritecom(0x01);
- 153   1      }
- 154          
- 155          void lcddisplay(int temp)
- 156          {
- 157   1        ui  tab[]={0,0,0,-2,0,0};
- 158   1        lcdwritecom(0x80);
- 159   1        lcdwritedata('+');
- 160   1        tab[0]=temp/10000;
- 161   1        tab[1]=temp%10000/1000;
- 162   1        tab[2]=temp%1000/100;
- 163   1        tab[4]=temp%100/10;
- 164   1        tab[5]=temp%10;
- 165   1        lcdwritecom(0x81);
- 166   1        for(num=0;num<6;num++)
- 167   1        {
- 168   2          lcdwritedata('0'+tab[num]);
- 169   2        }
- 170   1      }
- 171          
- 172          void adjust()
- 173          {
- 174   1        delay(100);
- 175   1        flag++;
- 176   1        if(flag==5)flag=1;
- 177   1        if(flag==1)
- 178   1        {
- 179   2          lcdwritecom(0x80+0x44);
-C51 COMPILER V9.54   MIAN                                                                  05/12/2020 19:53:09 PAGE 4   
+ 118   1        int temp;
+ 119   1        uc h,l;
+ 120   1        dschangetemp();
+ 121   1        dsreadtemp();
+ 122   1        l=dsreadbyte();
+ 123   1        h=dsreadbyte();
+ 124   1        temp=h;
+ 125   1        temp<<=8;
+ 126   1        temp|=l;
+ 127   1        temp=temp*0.0625*100+0.5;
+ 128   1        return temp;
+ 129   1      }
+ 130          
+ 131          void lcdwritecom(uc com)
+ 132          {
+ 133   1        lcdrs=0;
+ 134   1        P0=com;
+ 135   1        delay(10);
+ 136   1        lcden=1;
+ 137   1        delay(10);
+ 138   1        lcden=0;
+ 139   1      }
+ 140          void lcdwritedata(uc date)
+ 141          {
+ 142   1        lcdrs=1;
+ 143   1        P0=date;
+ 144   1        delay(10);
+ 145   1        lcden=1;
+ 146   1        delay(10);
+ 147   1        lcden=0;
+ 148   1      }
+ 149          void lcdinit()  //lcd显示初始化
+ 150          {
+ 151   1        lcdrw=0;
+ 152   1        lcden=0;
+ 153   1        lcdwritecom(0x38);
+ 154   1        lcdwritecom(0x0c);
+ 155   1        lcdwritecom(0x06);
+ 156   1        lcdwritecom(0x01);
+ 157   1      }
+ 158          
+ 159          void lcddisplay(int temp)
+ 160          {
+ 161   1        ui  tab[]={0,0,0,-2,0,0};
+ 162   1        lcdwritecom(0x80);
+ 163   1        lcdwritedata('+');
+ 164   1        tab[0]=temp/10000;
+ 165   1        tab[1]=temp%10000/1000;
+ 166   1        tab[2]=temp%1000/100;
+ 167   1        tab[4]=temp%100/10;
+ 168   1        tab[5]=temp%10;
+ 169   1        lcdwritecom(0x81);
+ 170   1        for(num=0;num<6;num++)
+ 171   1        {
+ 172   2          lcdwritedata('0'+tab[num]);
+ 173   2        }
+ 174   1      }
+ 175          
+ 176          void adjust()
+ 177          {
+ 178   1        delay(100);
+ 179   1        flag++;
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 4   
 
- 180   2          lcdwritecom(0x0f);  
- 181   2         }
- 182   1         if(flag==2)
- 183   1        {
- 184   2          lcdwritecom(0x80+0x45);
- 185   2          lcdwritecom(0x0f);  
- 186   2         }
- 187   1        if(flag==3)
- 188   1        {
- 189   2          lcdwritecom(0x80+0x47);
- 190   2          lcdwritecom(0x0f);  
- 191   2         }
- 192   1        if(flag==4)
- 193   1        {
- 194   2          lcdwritecom(0x80+0x48);
- 195   2          lcdwritecom(0x0f);  
- 196   2         }
- 197   1      }
- 198          void inc()
- 199          {
- 200   1        delay(100);
- 201   1        switch(flag)
- 202   1        {
- 203   2          case 1:lshi++; if(lshi==10)lshi=0;
- 204   2                  lcdwritedata('0'+lshi);
- 205   2                  lcdwritecom(0x10);
- 206   2                  break;
- 207   2          case 2:lge++; if(lge==10)lge=0;
- 208   2                  lcdwritedata('0'+lge);
+ 180   1        if(flag==5)flag=1;
+ 181   1        if(flag==1)
+ 182   1        {
+ 183   2          lcdwritecom(0x80+0x44);
+ 184   2          lcdwritecom(0x0f);  
+ 185   2         }
+ 186   1         if(flag==2)
+ 187   1        {
+ 188   2          lcdwritecom(0x80+0x45);
+ 189   2          lcdwritecom(0x0f);  
+ 190   2         }
+ 191   1        if(flag==3)
+ 192   1        {
+ 193   2          lcdwritecom(0x80+0x47);
+ 194   2          lcdwritecom(0x0f);  
+ 195   2         }
+ 196   1        if(flag==4)
+ 197   1        {
+ 198   2          lcdwritecom(0x80+0x48);
+ 199   2          lcdwritecom(0x0f);  
+ 200   2         }
+ 201   1      }
+ 202          void inc()
+ 203          {
+ 204   1        delay(100);
+ 205   1        switch(flag)
+ 206   1        {
+ 207   2          case 1:lshi++; if(lshi==10)lshi=0;
+ 208   2                  lcdwritedata('0'+lshi);
  209   2                  lcdwritecom(0x10);
  210   2                  break;
- 211   2          case 3:hshi++; if(hshi==10)hshi=0;
- 212   2                  lcdwritedata('0'+hshi);
+ 211   2          case 2:lge++; if(lge==10)lge=0;
+ 212   2                  lcdwritedata('0'+lge);
  213   2                  lcdwritecom(0x10);
  214   2                  break;
- 215   2          case 4:hge++; if(hge==10)hge=0;
- 216   2                  lcdwritedata('0'+hge);
+ 215   2          case 3:hshi++; if(hshi==10)hshi=0;
+ 216   2                  lcdwritedata('0'+hshi);
  217   2                  lcdwritecom(0x10);
  218   2                  break;
- 219   2        }
- 220   1      }
- 221          void dec()
- 222          {
- 223   1        delay(100);
- 224   1        switch(flag)
- 225   1        {
- 226   2          case 1:lshi--; if(lshi<0)lshi=9;
- 227   2                  lcdwritedata('0'+lshi);
- 228   2                  lcdwritecom(0x10);
- 229   2                  break;
- 230   2          case 2:lge--; if(lge<0)lge=9;
- 231   2                  lcdwritedata('0'+lge);
+ 219   2          case 4:hge++; if(hge==10)hge=0;
+ 220   2                  lcdwritedata('0'+hge);
+ 221   2                  lcdwritecom(0x10);
+ 222   2                  break;
+ 223   2        }
+ 224   1      }
+ 225          void dec()
+ 226          {
+ 227   1        delay(100);
+ 228   1        switch(flag)
+ 229   1        {
+ 230   2          case 1:lshi--; if(lshi<0)lshi=9;
+ 231   2                  lcdwritedata('0'+lshi);
  232   2                  lcdwritecom(0x10);
  233   2                  break;
- 234   2          case 3:hshi--; if(hshi<0)hshi=9;
- 235   2                  lcdwritedata('0'+hshi);
- 236   2                   lcdwritecom(0x10);
+ 234   2          case 2:lge--; if(lge<0)lge=9;
+ 235   2                  lcdwritedata('0'+lge);
+ 236   2                  lcdwritecom(0x10);
  237   2                  break;
- 238   2          case 4:hge--; if(hge<0)hge=9;
- 239   2                  lcdwritedata('0'+hge);
+ 238   2          case 3:hshi--; if(hshi<0)hshi=9;
+ 239   2                  lcdwritedata('0'+hshi);
  240   2                   lcdwritecom(0x10);
  241   2                  break;
-C51 COMPILER V9.54   MIAN                                                                  05/12/2020 19:53:09 PAGE 5   
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 5   
 
- 242   2        }
- 243   1      }
- 244          
- 245          void keyscan()
- 246          {
- 247   1        uc test,num;
- 248   1        num=0;
- 249   1        test=P1;
- 250   1        if(test!=0xff)
- 251   1        delay(5);
- 252   1        test=P1;
- 253   1        if(test==0xf7)
- 254   1        
- 255   1        {
- 256   2          while(P1!=0xff);
- 257   2          num++;
- 258   2          while(1)
- 259   2          {
- 260   3            test=P1;
- 261   3            if(test!=0xff)
- 262   3            delay(5);
- 263   3            test=P1;
- 264   3            if(test!=0xff)
- 265   3            {
- 266   4              if(test==0xf7)
- 267   4                num++;
- 268   4                if(num==2)
- 269   4                { lcdwritecom(0x0c);
- 270   5                  break;}
- 271   4              switch(test)
- 272   4              {
- 273   5                case 0xfe:adjust(); 
- 274   5                    break;
- 275   5                case 0xfd:inc();
- 276   5                    break;
- 277   5                case 0xfb:dec();
- 278   5                    break;
- 279   5              }
- 280   4            }
- 281   3            while(P1!=0xff);
- 282   3          
- 283   3          }
- 284   2          }
- 285   1      }
- 286          
- 287          void PIDinit()
- 288          {
- 289   1            
- 290   1        Kp=10;
- 291   1        Ti=100000;
- 292   1        Td=1000;
- 293   1        T=50;
- 294   1        R=60;
- 295   1        Pt = 100;
- 296   1      
- 297   1      }
- 298          
- 299          
- 300          uchar read_adc0804()
- 301          {
- 302   1        char b=0;
- 303   1        uchar a; 
-C51 COMPILER V9.54   MIAN                                                                  05/12/2020 19:53:09 PAGE 6   
+ 242   2          case 4:hge--; if(hge<0)hge=9;
+ 243   2                  lcdwritedata('0'+hge);
+ 244   2                   lcdwritecom(0x10);
+ 245   2                  break;
+ 246   2        }
+ 247   1      }
+ 248          
+ 249          
+ 250          
+ 251          void PIDinit()//pid参数初始值设定
+ 252          {
+ 253   1            
+ 254   1        Kp=10;
+ 255   1        Ti=100000;
+ 256   1        Td=1000;
+ 257   1        T=50;
+ 258   1        R=60;
+ 259   1        Pt = 100;
+ 260   1      
+ 261   1      }
+ 262          
+ 263          
+ 264          uchar read_adc0804()
+ 265          {
+ 266   1        char b=0;
+ 267   1        uchar a; 
+ 268   1        cs=1;
+ 269   1        wr=1;
+ 270   1        cs=0;
+ 271   1        wr=0;
+ 272   1        _nop_();
+ 273   1        wr=1;
+ 274   1        
+ 275   1        P3=0xff;        
+ 276   1        rd=1;
+ 277   1        rd=0;
+ 278   1        _nop_();
+ 279   1        a=P3;
+ 280   1        rd=1;
+ 281   1        cs=1; 
+ 282   1      
+ 283   1        a=a/2;
+ 284   1      
+ 285   1       return a;
+ 286   1      }
+ 287          
+ 288          void PIDdeal()
+ 289          {
+ 290   1        float Ek;
+ 291   1        float Po,Io,Do;
+ 292   1        
+ 293   1        float Ki;
+ 294   1        float Kd;
+ 295   1        float EK;
+ 296   1        
+ 297   1        Ek=R-summer; //偏差
+ 298   1        
+ 299   1        SEk+=Ek;      //偏差累累积
+ 300   1        Po=Kp*Ek;       //P输出
+ 301   1        Ki = (T/Ti);   
+ 302   1        Ki = Ki*Kp;    
+ 303   1        Io=Ki*SEk;  //I输出
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 6   
 
- 304   1        cs=1;
- 305   1        wr=1;
- 306   1        cs=0;
- 307   1        wr=0;
- 308   1        _nop_();
- 309   1        wr=1;
- 310   1        
- 311   1        P3=0xff;         //?????????
- 312   1        rd=1;
- 313   1        rd=0;
- 314   1        _nop_();
- 315   1        a=P3;
- 316   1        rd=1;
- 317   1        cs=1; 
- 318   1      
- 319   1        a=a/2;
- 320   1      
- 321   1       return a;
- 322   1      }
- 323          
- 324          void PIDdeal()
- 325          {
- 326   1        float Ek;
- 327   1        float Po,Io,Do;
- 328   1        
- 329   1        float Ki;
- 330   1        float Kd;
- 331   1        float EK;
- 332   1        
- 333   1        Ek=R-summer; 
- 334   1        
- 335   1        SEk+=Ek;
- 336   1        Po=Kp*Ek;      
- 337   1        Ki = (T/Ti);
- 338   1        Ki = Ki*Kp;
- 339   1        Io=Ki*SEk;  
- 340   1      
- 341   1        Kd = (Td/T);
- 342   1        Kd = Kd*Kp;
- 343   1        EK = Ek-Ek_1;
- 344   1        Do=Kd*EK;
- 345   1      
- 346   1        u= Po+Io+Do;
- 347   1        Ek_1=Ek;
- 348   1        
- 349   1      
- 350   1         if(u>Pt)
- 351   1         {
- 352   2          u=Pt;
- 353   2         }else if(u==0)
- 354   1         {
- 355   2          u=u0; 
- 356   2         }else if(u<-100)
- 357   1         {
- 358   2            u=-100;
- 359   2         }
- 360   1      }
- 361          
- 362          void stepping_motor()
- 363          {
- 364   1          if(u>=0) return ;
- 365   1          control=1;
-C51 COMPILER V9.54   MIAN                                                                  05/12/2020 19:53:09 PAGE 7   
+ 304   1      
+ 305   1        Kd = (Td/T);
+ 306   1        Kd = Kd*Kp;
+ 307   1        EK = Ek-Ek_1;
+ 308   1        Do=Kd*EK;    //D输出
+ 309   1      
+ 310   1        u= Po+Io+Do;   //PID输出
+ 311   1        Ek_1=Ek;    //下次输出准备
+ 312   1        
+ 313   1      
+ 314   1         if(u>Pt)   //输出范围
+ 315   1         {
+ 316   2          u=Pt;
+ 317   2         }else if(u==0)
+ 318   1         {
+ 319   2          u=u0; 
+ 320   2         }else if(u<-100)
+ 321   1         {
+ 322   2            u=-100;
+ 323   2         }
+ 324   1      }
+ 325          
+ 326          void stepping_motor()  //电机控制
+ 327          {
+ 328   1          if(u>=0) return ;
+ 329   1          control=1;
+ 330   1          D=0;
+ 331   1          
+ 332   1          sm_delay(10000);
+ 333   1          D=1;
+ 334   1      }
+ 335          void display_content()
+ 336          {
+ 337   1          A1=(unsigned int)R/100; //设定值显示
+ 338   1          A2=(unsigned int)R%100/10;
+ 339   1          A3=(unsigned int)R%10;
+ 340   1          lcdwritecom(0x80);
+ 341   1          lcdwritedata('s');
+ 342   1          lcdwritedata('e');
+ 343   1          lcdwritedata('t');
+ 344   1          lcdwritedata(':');
+ 345   1          lcdwritedata(0x10);
+ 346   1          lcdwritedata(lcd[A1]);
+ 347   1          lcdwritedata(lcd[A2]);
+ 348   1          lcdwritedata(lcd[A3]);
+ 349   1        
+ 350   1          A1=summer/100; //设定值显示
+ 351   1          A2=summer%100/10;
+ 352   1          A3=summer%10;
+ 353   1          lcdwritecom(0x89);
+ 354   1          lcdwritedata('n');
+ 355   1          lcdwritedata('o');
+ 356   1          lcdwritedata('w');
+ 357   1          lcdwritedata(':');
+ 358   1          lcdwritedata(lcd[A1]);
+ 359   1          lcdwritedata(lcd[A2]);
+ 360   1          lcdwritedata(lcd[A3]);
+ 361   1          if(u>=0){
+ 362   2            A1=(unsigned int)u/100;
+ 363   2            A2=(unsigned int)u%100/10;
+ 364   2            A3=(unsigned int)u%10;
+ 365   2            lcdwritecom(0x80+0X40);
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 7   
 
- 366   1          D=0;
- 367   1          A=1;
- 368   1          sm_delay(10000);
- 369   1          A=0;
- 370   1          BB=1;
- 371   1          sm_delay(10000);
- 372   1          BB=0;
- 373   1          C=1;
- 374   1          sm_delay(10000);
- 375   1          C=0;
- 376   1          D=1;
- 377   1          sm_delay(10000);
- 378   1      }
- 379          void display_content()
- 380          {
- 381   1          A1=summer/100; 
- 382   1          A2=summer%100/10;
- 383   1          A3=summer%10;
- 384   1          lcdwritecom(0x80);
- 385   1          lcdwritedata(lcd[A1]);
- 386   1          lcdwritecom(0x81);
- 387   1          lcdwritedata(lcd[A2]);
- 388   1          lcdwritecom(0x82);
- 389   1          lcdwritedata(lcd[A3]);
- 390   1          if(u>=0){
- 391   2            A1=(unsigned int)u/100;
- 392   2            A2=(unsigned int)u%100/10;
- 393   2            A3=(unsigned int)u%10;
- 394   2            lcdwritecom(0x80+0X40);
- 395   2            lcdwritedata(0x10);
- 396   2            lcdwritecom(0x81+0X40);
- 397   2            lcdwritedata(lcd[A1]);
- 398   2            lcdwritecom(0x82+0X40);
- 399   2            lcdwritedata(lcd[A2]);
- 400   2            lcdwritecom(0x83+0X40);
- 401   2            lcdwritedata(lcd[A3]);
- 402   2          }
- 403   1          else{
- 404   2            A1=(unsigned int)u/100;
- 405   2            A2=(unsigned int)u%100/10;
- 406   2            A3=(unsigned int)u%10;
- 407   2            lcdwritecom(0x80+0X40);
- 408   2            lcdwritedata(0x2d);
- 409   2            lcdwritecom(0x81+0X40);
- 410   2            lcdwritedata(lcd[A1]);
- 411   2            lcdwritecom(0x82+0X40);
- 412   2            lcdwritedata(lcd[A2]);
- 413   2            lcdwritecom(0x83+0X40);
- 414   2            lcdwritedata(lcd[A3]);
- 415   2          }
- 416   1      }
- 417          void pwm()
- 418          {
- 419   1        static uc i;
- 420   1        if(u<0) return ;
- 421   1      
- 422   1        i++; 
- 423   1        
- 424   1        if(i>Pt)
- 425   1        {
- 426   2          i = 0;  
- 427   2        } 
-C51 COMPILER V9.54   MIAN                                                                  05/12/2020 19:53:09 PAGE 8   
+ 366   2            lcdwritedata('p');
+ 367   2            lcdwritedata('w');
+ 368   2            lcdwritedata('m');
+ 369   2            lcdwritedata(':');
+ 370   2            lcdwritedata(0x10);
+ 371   2            lcdwritedata(lcd[A1]);
+ 372   2            lcdwritedata(lcd[A2]);
+ 373   2            lcdwritedata(lcd[A3]);
+ 374   2          }
+ 375   1          else{
+ 376   2            A1=(unsigned int)u/100;
+ 377   2            A2=(unsigned int)u%100/10;
+ 378   2            A3=(unsigned int)u%10;
+ 379   2            lcdwritecom(0x80+0X40);
+ 380   2            lcdwritedata('p');
+ 381   2            lcdwritedata('w');
+ 382   2            lcdwritedata('m');
+ 383   2            lcdwritedata(':');
+ 384   2            lcdwritedata(0x2d);
+ 385   2            lcdwritedata(lcd[A1]);  
+ 386   2            lcdwritedata(lcd[A2]);
+ 387   2            lcdwritedata(lcd[A3]);
+ 388   2          }
+ 389   1      }
+ 390          void pwm()
+ 391          {
+ 392   1        static uc i;
+ 393   1        if(u<0) return ;
+ 394   1      
+ 395   1        i++; 
+ 396   1        
+ 397   1        if(i>Pt)
+ 398   1        {
+ 399   2          i = 0;  
+ 400   2        } 
+ 401   1        if(i < u)
+ 402   1        {
+ 403   2          control=0;
+ 404   2        } else if(i>u){
+ 405   2          control=1;
+ 406   2        };
+ 407   1      }
+ 408          int keyscan()
+ 409          {
+ 410   1        if(k0==0)   //设置键
+ 411   1        {
+ 412   2          delay(5);
+ 413   2          if(k0==0)
+ 414   2          {
+ 415   3            while(k0==0);
+ 416   3            while(1)
+ 417   3            {
+ 418   4              A1=(unsigned int)R/100; //设定值显示
+ 419   4              A2=(unsigned int)R%100/10;
+ 420   4              A3=(unsigned int)R%10;
+ 421   4              lcdwritecom(0x80);
+ 422   4              lcdwritedata('s');
+ 423   4              lcdwritedata('e');
+ 424   4              lcdwritedata('t');
+ 425   4              lcdwritedata(':');
+ 426   4              lcdwritedata(0x10);
+ 427   4              lcdwritedata(lcd[A1]);
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 8   
 
- 428   1        if(i < u)
- 429   1        {
- 430   2          control=0;
- 431   2        } else if(i>u){
- 432   2          control=1;
- 433   2        };
- 434   1      }
- 435          
- 436          void main()
- 437          {
- 438   1        TMOD=0x01;
- 439   1        TH0=(65535-10900)/256;
- 440   1        TL0=(65535-10900)%256;
- 441   1        ET0=1;
- 442   1        TR0=1;
- 443   1        EA=1;
- 444   1        PIDinit();
- 445   1        lcdinit();
- 446   1        while(1)
- 447   1        {   
- 448   2          summer=read_adc0804();
- 449   2          PIDdeal();
- 450   2          stepping_motor();
- 451   2          display_content();
- 452   2        }
- 453   1      }
- 454          
- 455          void t0() interrupt 1
- 456          { 
- 457   1        TH0=(65535-10900)/256;
- 458   1        TL0=(65535-10900)%256;
- 459   1        pwm();
- 460   1        EA=1;
+ 428   4              lcdwritedata(lcd[A2]);
+ 429   4              lcdwritedata(lcd[A3]);
+ 430   4              delay(5000);
+ 431   4              lcdwritecom(0x85);
+ 432   4              lcdwritedata('-');
+ 433   4              lcdwritedata('-');
+ 434   4              lcdwritedata('-');
+ 435   4              delay(5000);
+ 436   4              if(k1==0)   //加温键
+ 437   4              {
+ 438   5                delay(5);
+ 439   5                if(k1==0)
+ 440   5                  while(k1==0);
+ 441   5                  R+=1;
+ 442   5              }
+ 443   4              if(k2==0)  //减温键
+ 444   4              {
+ 445   5                delay(5);
+ 446   5                if(k2==0)
+ 447   5                  while(k2==0);
+ 448   5                  R-=1;
+ 449   5              }
+ 450   4              if(k3==0)  //完成键
+ 451   4              {
+ 452   5                delay(5);
+ 453   5                if(k3==0)
+ 454   5                  while(k3==0);
+ 455   5                  return;
+ 456   5              }
+ 457   4              delay(5);
+ 458   4            }
+ 459   3          }
+ 460   2        }     
  461   1      }
- 462          
+ 462          void main()
+ 463          {
+ 464   1        TMOD=0x01;//定时器方式一
+ 465   1        TH0=(65535-10900)/256;//定时10ms
+ 466   1        TL0=(65535-10900)%256;
+ 467   1        ET0=1;
+ 468   1        TR0=1;
+ 469   1        EA=1;
+ 470   1        PIDinit();//PID初始化
+ 471   1        lcdinit();//lcd初始化
+ 472   1        while(1)
+ 473   1        {   
+ 474   2          summer=read_adc0804();//温度拂读取
+ 475   2          PIDdeal();//pid计算
+ 476   2          stepping_motor();//电机控制
+ 477   2          display_content();//显示
+ 478   2        }
+ 479   1      }
+ 480          
+ 481          void t0() interrupt 1
+ 482          { 
+ 483   1        TH0=(65535-10900)/256;
+ 484   1        TL0=(65535-10900)%256;
+ 485   1        pwm();//pwm控制
+ 486   1        keyscan();
+ 487   1        EA=1;//启动定时器
+ 488   1      }
+ 489          
+C51 COMPILER V9.54   MIAN                                                                  05/15/2020 17:26:37 PAGE 9   
+
+*** WARNING C290 IN LINE 461 OF mian.c: missing return value
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1786    ----
+   CODE SIZE        =   1947    ----
    CONSTANT SIZE    =     12    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     69      41
+   DATA SIZE        =     69      39
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

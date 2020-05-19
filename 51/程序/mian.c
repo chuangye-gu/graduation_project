@@ -15,7 +15,11 @@ sbit BB=P2^1;
 sbit C=P2^2;
 sbit D=P2^4;
 
-/*==============*/
+sbit k0 = P1^0;
+sbit k1 = P1^1;
+sbit k2 = P1^2;
+sbit k3 = P1^3;
+
  float R;
  float Kp;
  float T;
@@ -142,7 +146,7 @@ void lcdwritedata(uc date)
 	delay(10);
 	lcden=0;
 }
-void lcdinit()
+void lcdinit()  //lcd显示初始化
 {
 	lcdrw=0;
 	lcden=0;
@@ -242,49 +246,9 @@ void dec()
 	}
 }
 
-void keyscan()
-{
-	uc test,num;
-	num=0;
-	test=P1;
-	if(test!=0xff)
-	delay(5);
-	test=P1;
-	if(test==0xf7)
-	
-	{
-		while(P1!=0xff);
-		num++;
-		while(1)
-		{
-			test=P1;
-			if(test!=0xff)
-			delay(5);
-			test=P1;
-			if(test!=0xff)
-			{
-				if(test==0xf7)
-					num++;
-					if(num==2)
-					{	lcdwritecom(0x0c);
-						break;}
-				switch(test)
-				{
-					case 0xfe:adjust();	
-							break;
-					case 0xfd:inc();
-							break;
-					case 0xfb:dec();
-							break;
-				}
-		 	}
-			while(P1!=0xff);
-		
-		}
-		}
-}
 
-void PIDinit()
+
+void PIDinit()//pid参数初始值设定
 {
       
 	Kp=10;
@@ -330,24 +294,24 @@ void PIDdeal()
 	float Kd;
 	float EK;
 	
-	Ek=R-summer; 
+	Ek=R-summer; //偏差
 	
-	SEk+=Ek;
-	Po=Kp*Ek;      
-	Ki = (T/Ti);
-	Ki = Ki*Kp;
-	Io=Ki*SEk;  
+	SEk+=Ek;      //偏差累累积
+	Po=Kp*Ek;       //P输出
+	Ki = (T/Ti);   
+	Ki = Ki*Kp;    
+	Io=Ki*SEk;  //I输出
 
 	Kd = (Td/T);
 	Kd = Kd*Kp;
 	EK = Ek-Ek_1;
-	Do=Kd*EK;
+	Do=Kd*EK;    //D输出
 
-	u= Po+Io+Do;
-	Ek_1=Ek;
+	u= Po+Io+Do;   //PID输出
+	Ek_1=Ek;    //下次输出准备
 	
 
-	 if(u>Pt)
+	 if(u>Pt)   //输出范围
 	 {
 		u=Pt;
 	 }else if(u==0)
@@ -359,45 +323,53 @@ void PIDdeal()
 	 }
 }
 
-void stepping_motor()
+void stepping_motor()  //电机控制
 {
 		if(u>=0) return ;
 		control=1;
 		D=0;
-		A=1;
+		
 		sm_delay(10000);
-		A=0;
-		BB=1;
-		sm_delay(10000);
-		BB=0;
-		C=1;
-		sm_delay(10000);
-		C=0;
 		D=1;
-		sm_delay(10000);
 }
 void display_content()
 {
-		A1=summer/100; 
+		A1=(unsigned int)R/100; //设定值显示
+		A2=(unsigned int)R%100/10;
+		A3=(unsigned int)R%10;
+		lcdwritecom(0x80);
+		lcdwritedata('s');
+		lcdwritedata('e');
+		lcdwritedata('t');
+		lcdwritedata(':');
+		lcdwritedata(0x10);
+		lcdwritedata(lcd[A1]);
+		lcdwritedata(lcd[A2]);
+		lcdwritedata(lcd[A3]);
+	
+		A1=summer/100; //设定值显示
 		A2=summer%100/10;
 		A3=summer%10;
-		lcdwritecom(0x80);
+		lcdwritecom(0x89);
+		lcdwritedata('n');
+		lcdwritedata('o');
+		lcdwritedata('w');
+		lcdwritedata(':');
 		lcdwritedata(lcd[A1]);
-		lcdwritecom(0x81);
 		lcdwritedata(lcd[A2]);
-		lcdwritecom(0x82);
 		lcdwritedata(lcd[A3]);
 		if(u>=0){
 			A1=(unsigned int)u/100;
 			A2=(unsigned int)u%100/10;
 			A3=(unsigned int)u%10;
 			lcdwritecom(0x80+0X40);
+			lcdwritedata('p');
+			lcdwritedata('w');
+			lcdwritedata('m');
+			lcdwritedata(':');
 			lcdwritedata(0x10);
-			lcdwritecom(0x81+0X40);
 			lcdwritedata(lcd[A1]);
-			lcdwritecom(0x82+0X40);
 			lcdwritedata(lcd[A2]);
-			lcdwritecom(0x83+0X40);
 			lcdwritedata(lcd[A3]);
 		}
 		else{
@@ -405,12 +377,13 @@ void display_content()
 			A2=(unsigned int)u%100/10;
 			A3=(unsigned int)u%10;
 			lcdwritecom(0x80+0X40);
+			lcdwritedata('p');
+			lcdwritedata('w');
+			lcdwritedata('m');
+			lcdwritedata(':');
 			lcdwritedata(0x2d);
-			lcdwritecom(0x81+0X40);
-			lcdwritedata(lcd[A1]);
-			lcdwritecom(0x82+0X40);
+			lcdwritedata(lcd[A1]);	
 			lcdwritedata(lcd[A2]);
-			lcdwritecom(0x83+0X40);
 			lcdwritedata(lcd[A3]);
 		}
 }
@@ -432,23 +405,76 @@ void pwm()
 		control=1;
 	};
 }
-
+int keyscan()
+{
+	if(k0==0)   //设置键
+	{
+		delay(5);
+		if(k0==0)
+		{
+			while(k0==0);
+			while(1)
+			{
+				A1=(unsigned int)R/100; //设定值显示
+				A2=(unsigned int)R%100/10;
+				A3=(unsigned int)R%10;
+				lcdwritecom(0x80);
+				lcdwritedata('s');
+				lcdwritedata('e');
+				lcdwritedata('t');
+				lcdwritedata(':');
+				lcdwritedata(0x10);
+				lcdwritedata(lcd[A1]);
+				lcdwritedata(lcd[A2]);
+				lcdwritedata(lcd[A3]);
+				delay(5000);
+				lcdwritecom(0x85);
+				lcdwritedata('-');
+				lcdwritedata('-');
+				lcdwritedata('-');
+				delay(5000);
+				if(k1==0)   //加温键
+				{
+					delay(5);
+					if(k1==0)
+						while(k1==0);
+						R+=1;
+				}
+				if(k2==0)  //减温键
+				{
+					delay(5);
+					if(k2==0)
+						while(k2==0);
+						R-=1;
+				}
+				if(k3==0)  //完成键
+				{
+					delay(5);
+					if(k3==0)
+						while(k3==0);
+						return;
+				}
+				delay(5);
+			}
+		}
+	}			
+}
 void main()
 {
-	TMOD=0x01;
-	TH0=(65535-10900)/256;
+	TMOD=0x01;//定时器方式一
+	TH0=(65535-10900)/256;//定时10ms
 	TL0=(65535-10900)%256;
 	ET0=1;
 	TR0=1;
 	EA=1;
-	PIDinit();
-	lcdinit();
+	PIDinit();//PID初始化
+	lcdinit();//lcd初始化
 	while(1)
 	{ 	
-		summer=read_adc0804();
-		PIDdeal();
-		stepping_motor();
-		display_content();
+		summer=read_adc0804();//温度拂读取
+		PIDdeal();//pid计算
+		stepping_motor();//电机控制
+		display_content();//显示
 	}
 }
 
@@ -456,7 +482,8 @@ void t0() interrupt 1
 {	
 	TH0=(65535-10900)/256;
 	TL0=(65535-10900)%256;
-	pwm();
-	EA=1;
+	pwm();//pwm控制
+	keyscan();
+	EA=1;//启动定时器
 }
 

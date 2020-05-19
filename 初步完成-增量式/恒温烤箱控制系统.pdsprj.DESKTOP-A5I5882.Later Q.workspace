@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 <WORKSPACE>
  <FRAME activewindow="0">
-  <PLACEMENT>2c00000002000000020000000083ffff0083ffffffffffffffffffff8300000009000000d3040000cf020000</PLACEMENT>
+  <PLACEMENT>2c00000002000000030000000083ffff0083ffffffffffffffffffff8300000009000000d3040000cf020000</PLACEMENT>
   <WINDOW type="default" module="ISIS"/>
  </FRAME>
  <MODULE name="VSMDEBUG">
@@ -31,7 +31,7 @@
      <ITEM name="nItems">0</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="450" x="916" flags="00000023" y="11" h="250" pid="0" iid="46">
+   <POPUP w="450" x="941" flags="00000022" y="124" h="250" pid="0" iid="46">
     <PROPERTIES>
      <ITEM name="AutoEcho">0</ITEM>
      <ITEM name="HexMode">0</ITEM>
@@ -337,7 +337,7 @@
      <ITEM name="TopLineAddress">E000E000</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="1352" x="6" flags="0000002b" y="126" h="423" pid="100" iid="12">
+   <POPUP w="1352" x="6" flags="0000002a" y="126" h="423" pid="100" iid="12">
     <PROPERTIES>
      <ITEM name="CaseSensitive">No</ITEM>
      <ITEM name="DISPADDRS">Yes</ITEM>
@@ -348,7 +348,7 @@
      <ITEM name="nBreakpoints">0</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="1356" x="5" flags="0000000b" y="580" h="120" pid="101" iid="12">
+   <POPUP w="1356" x="5" flags="0000000a" y="580" h="120" pid="101" iid="12">
     <PROPERTIES>
      <ITEM name="Address Column Width">358</ITEM>
      <ITEM name="AutoResize">No</ITEM>
@@ -365,13 +365,13 @@
      <ITEM name="nItems">0</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="226" x="5" flags="00000008" y="106" h="182" pid="102" iid="12">
+   <POPUP w="30" x="5" flags="00000008" y="106" h="13" pid="102" iid="12">
     <PROPERTIES/>
    </POPUP>
-   <POPUP w="170" x="5" flags="00000008" y="106" h="237" pid="191" iid="12">
+   <POPUP w="22" x="5" flags="00000008" y="106" h="18" pid="191" iid="12">
     <PROPERTIES/>
    </POPUP>
-   <POPUP w="695" x="0" flags="00008001" y="226" h="453" pid="0" iid="15">
+   <POPUP w="695" x="869" flags="00000000" y="382" h="453" pid="0" iid="15">
     <PROPERTIES/>
    </POPUP>
   </PWI>

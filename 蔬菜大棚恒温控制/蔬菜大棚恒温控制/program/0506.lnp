@@ -1,0 +1,4 @@
+"STARTUP.obj",
+".\mian.obj" 
+TO "0506" 
+RAMSIZE(256) 

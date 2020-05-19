@@ -1,0 +1,19 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Administrator\Desktop\测试工程\test.uvproj
+Project File Date:  06/04/2017
+
+<h2>Output:</h2>
+Build target '目标 1'
+compiling test.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?PIDINIT?TEST
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?PIDDEAL?TEST
+Program Size: data=80.0 xdata=0 code=2772
+creating hex file from "test"...
+"test" - 0 Error(s), 2 Warning(s).

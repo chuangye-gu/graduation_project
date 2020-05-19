@@ -37,23 +37,23 @@ int main(void)
 	while(1){	
 		++t;
 		printf("%d : %d.%-3d\r",t,(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
-		/*
+		
 		sprintf(str, "NOW:%d.%-3d",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
 		LCD1602_ShowStr(2,1,str);
 		LCD1602_WriteOneDat(0xdf);
 		LCD1602_WriteDat('C');
 
-		printf("S:%d    ",(unsigned int)pid.Sv);
-		printf("P:%d.%-3d    ",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
-		printf("O:%d.%-3d\r",(unsigned int)pid.OUT,(unsigned int)((pid.OUT-(unsigned int)pid.OUT)*1000));
+//		printf("S:%d    ",(unsigned int)pid.Sv);
+//		printf("P:%d.%-3d    ",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
+//		printf("O:%d.%-3d\r",(unsigned int)pid.OUT,(unsigned int)((pid.OUT-(unsigned int)pid.OUT)*1000));
 		
-		sprintf(str, "S:%d",(unsigned int)pid.Sv);
-		LCD1602_ShowStr(0,0,str);
-		sprintf(str, "P:%d.%-3d",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
-		LCD1602_ShowStr(0,1,str);
-		sprintf(str, "O:%d.%-3d",(unsigned int)pid.OUT,(unsigned int)((pid.OUT-(unsigned int)pid.OUT)*1000));
-		LCD1602_ShowStr(7,1,str);
-	*/
+//		sprintf(str, "S:%d",(unsigned int)pid.Sv);
+//		LCD1602_ShowStr(0,0,str);
+//		sprintf(str, "P:%d.%-3d",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
+//		LCD1602_ShowStr(0,1,str);
+//		sprintf(str, "O:%d.%-3d",(unsigned int)pid.OUT,(unsigned int)((pid.OUT-(unsigned int)pid.OUT)*1000));
+//		LCD1602_ShowStr(7,1,str);
+	
 	}
 
 }

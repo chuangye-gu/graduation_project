@@ -728,7 +728,7 @@ I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_spi.h)(0x4D783BB4)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h)(0x4D783BB4)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h)(0x4D783BB4)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h)(0x4D783BB4)
-F (..\User\main.c)(0x5EA2EBA9)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I..\Libraries\CMSIS\CM3\CoreSupport -I..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x -I..\Libraries\STM32F10x_StdPeriph_Driver\inc -I..\User-I "C:\Users\Later Q\Desktop\毕业设计\max6675测试\自己-增量式\Project\RTE"-I D:\KEIL\MDK-KEIL\PACK\Keil\STM32F1xx_DFP\1.0.5\Device\Include-I D:\KEIL\MDK-KEIL\Core\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (..\User\main.c)(0x5EC372E3)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I..\Libraries\CMSIS\CM3\CoreSupport -I..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x -I..\Libraries\STM32F10x_StdPeriph_Driver\inc -I..\User-I "C:\Users\Later Q\Desktop\毕业设计\max6675测试\自己-增量式\Project\RTE"-I D:\KEIL\MDK-KEIL\PACK\Keil\STM32F1xx_DFP\1.0.5\Device\Include-I D:\KEIL\MDK-KEIL\Core\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h)(0x4D783CB4)
 I (..\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x4D523B58)
 I (D:\KEIL\MDK-KEIL\Core\ARM\ARMCC\include\stdint.h)(0x5475F300)
@@ -797,7 +797,7 @@ I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h)(0x4D783BB4)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h)(0x4D783BB4)
 I (D:\KEIL\MDK-KEIL\Core\ARM\ARMCC\include\stdio.h)(0x5475F300)
-F (..\User\pidout.c)(0x5E94225E)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I..\Libraries\CMSIS\CM3\CoreSupport -I..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x -I..\Libraries\STM32F10x_StdPeriph_Driver\inc -I..\User-I "C:\Users\Later Q\Desktop\毕业设计\max6675测试\自己-增量式\Project\RTE"-I D:\KEIL\MDK-KEIL\PACK\Keil\STM32F1xx_DFP\1.0.5\Device\Include-I D:\KEIL\MDK-KEIL\Core\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\pidout.o --omf_browse .\objects\pidout.crf --depend .\objects\pidout.d)
+F (..\User\pidout.c)(0x5EC36AB9)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I..\Libraries\CMSIS\CM3\CoreSupport -I..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x -I..\Libraries\STM32F10x_StdPeriph_Driver\inc -I..\User-I "C:\Users\Later Q\Desktop\毕业设计\max6675测试\自己-增量式\Project\RTE"-I D:\KEIL\MDK-KEIL\PACK\Keil\STM32F1xx_DFP\1.0.5\Device\Include-I D:\KEIL\MDK-KEIL\Core\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\pidout.o --omf_browse .\objects\pidout.crf --depend .\objects\pidout.d)
 I (..\User\pidout.h)(0x5E94225E)
 I (..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h)(0x4D99A59E)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h)(0x4D783BB4)
@@ -980,7 +980,7 @@ I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h)(0x4D783BB4)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h)(0x4D783BB4)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h)(0x4D783BB4)
-F (..\User\max6675.c)(0x5EA2F36C)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I..\Libraries\CMSIS\CM3\CoreSupport -I..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x -I..\Libraries\STM32F10x_StdPeriph_Driver\inc -I..\User-I "C:\Users\Later Q\Desktop\毕业设计\max6675测试\自己-增量式\Project\RTE"-I D:\KEIL\MDK-KEIL\PACK\Keil\STM32F1xx_DFP\1.0.5\Device\Include-I D:\KEIL\MDK-KEIL\Core\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\max6675.o --omf_browse .\objects\max6675.crf --depend .\objects\max6675.d)
+F (..\User\max6675.c)(0x5EC36BC2)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I..\Libraries\CMSIS\CM3\CoreSupport -I..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x -I..\Libraries\STM32F10x_StdPeriph_Driver\inc -I..\User-I "C:\Users\Later Q\Desktop\毕业设计\max6675测试\自己-增量式\Project\RTE"-I D:\KEIL\MDK-KEIL\PACK\Keil\STM32F1xx_DFP\1.0.5\Device\Include-I D:\KEIL\MDK-KEIL\Core\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\max6675.o --omf_browse .\objects\max6675.crf --depend .\objects\max6675.d)
 I (..\User\max6675.h)(0x576E04FF)
 I (..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h)(0x4D99A59E)
 I (..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h)(0x4D783BB4)
