@@ -28,12 +28,13 @@
 .\objects\main.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h
 .\objects\main.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h
 .\objects\main.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h
+.\objects\main.o: ..\User\systick.h
 .\objects\main.o: ..\User\pid.h
 .\objects\main.o: D:\KEIL\MDK-KEIL\Core\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\main.o: ..\User\lcd1602.h
-.\objects\main.o: ..\User\systick.h
 .\objects\main.o: ..\User\usart.h
 .\objects\main.o: ..\User\adc.h
 .\objects\main.o: ..\User\pwm.h
 .\objects\main.o: ..\User\pidout.h
 .\objects\main.o: ..\User\time_init.h
+.\objects\main.o: ..\User\key.h

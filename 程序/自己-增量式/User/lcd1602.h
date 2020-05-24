@@ -4,6 +4,7 @@
 #include "stm32f10x.h"
 #include "stm32f10x_gpio.h"
 #include "systick.h"
+#include "pid.h"
 
 #define LCD1602_CLK  RCC_APB2Periph_GPIOB  
 
@@ -33,10 +34,9 @@ void LCD1602_Init(void);  //≥ı ºªØLCD602£ª
 void LCD1602_ShowStr(uint8_t x, uint8_t y, char *str);
 void LCD1602_WriteDat(uint8_t dat);
 void LCD1602_WriteOneDat(uint8_t dat);
-
-
-
-
+void display_print(void);
+void display_print_set(void);
+void display_print_now(void);
 
 
 #endif //_BSP_LCD1602_H

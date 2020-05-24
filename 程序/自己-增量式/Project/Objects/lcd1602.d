@@ -30,3 +30,5 @@
 .\objects\lcd1602.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h
 .\objects\lcd1602.o: ..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h
 .\objects\lcd1602.o: ..\User\systick.h
+.\objects\lcd1602.o: ..\User\pid.h
+.\objects\lcd1602.o: D:\KEIL\MDK-KEIL\Core\ARM\ARMCC\Bin\..\include\stdio.h

@@ -1,7 +1,7 @@
 Protel Design System Design Rule Check
 PCB File : C:\Users\Later Q\Desktop\毕业设计\PCB\恒温烤箱控制系统\PCB.PcbDoc
-Date     : 2020/4/28
-Time     : 12:08:20
+Date     : 2020/5/20
+Time     : 21:53:57
 
 Processing Rule : Clearance Constraint (Gap=0.152mm) (All),(All)
 Rule Violations :0
@@ -21,4 +21,4 @@ Rule Violations :0
 
 Violations Detected : 0
 Waived Violations : 0
-Time Elapsed        : 00:00:06
+Time Elapsed        : 00:00:03

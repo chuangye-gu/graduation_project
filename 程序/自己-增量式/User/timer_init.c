@@ -7,7 +7,7 @@ void Timer3_init()	//T3 1ms时钟
 TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM3,ENABLE);
 
-TIM_TimeBaseStructure.TIM_Period = 9; //计数个数     //1ms
+TIM_TimeBaseStructure.TIM_Period = 10; //计数个数     //1us
 TIM_TimeBaseStructure.TIM_Prescaler =72-1;//分频值   	    
 TIM_TimeBaseStructure.TIM_ClockDivision = 0x0; 	//分割时钟			
 TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; //向上计数

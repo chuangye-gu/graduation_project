@@ -95,8 +95,31 @@ void LCD1602_Init(void)
     LCD1602_WriteCmd(0x06);  //文字不动，地址自动+1
     LCD1602_WriteCmd(0x01);  //清屏
 }
-	
-	
+
+char *str;
+
+void display_print_set(void)
+{	
+
+	sprintf(str, "SET:%d",(unsigned int)pid.Sv);
+	LCD1602_ShowStr(4,0,str);
+	LCD1602_WriteOneDat(0xdf);
+	LCD1602_WriteDat('C');
+}
+
+void display_print_now(void)
+{
+
+		sprintf(str, "NOW:%d.%-3d",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
+		LCD1602_ShowStr(2,1,str);
+		LCD1602_WriteOneDat(0xdf);
+		LCD1602_WriteDat('C');
+
+		printf("S:%d    ",(unsigned int)pid.Sv);
+		printf("P:%d.%-3d    ",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
+		printf("O:%d.%-3d\r",(unsigned int)pid.OUT,(unsigned int)((pid.OUT-(unsigned int)pid.OUT)*1000));
+}
+
 
 
 

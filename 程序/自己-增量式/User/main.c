@@ -1,4 +1,5 @@
 #include "stm32f10x.h"
+#include "systick.h"
 #include "pid.h"
 #include "lcd1602.h"
 #include "usart.h"
@@ -6,6 +7,7 @@
 #include "pwm.h"
 #include "pidout.h"
 #include "time_init.h"
+#include "key.h"
 
 void TIM3_IRQHandler() //1ms 1¥Œ
 {		  
@@ -19,7 +21,7 @@ void TIM3_IRQHandler() //1ms 1¥Œ
 }
 int main(void)
 {
-	char *str;
+	
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
 
 	usart_init();
@@ -29,28 +31,10 @@ int main(void)
 	PIDOUT_init();
 	Timer3_init();	//T3 10us ±÷”
 	
-	sprintf(str, "SET:%d",(unsigned int)pid.Sv);
-	LCD1602_ShowStr(4,0,str);
-	LCD1602_WriteOneDat(0xdf);
-	LCD1602_WriteDat('C');
+	display_print_set();
 	while(1){	
+		display_print_now();
 		
-		sprintf(str, "NOW:%d.%-3d",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
-		LCD1602_ShowStr(2,1,str);
-		LCD1602_WriteOneDat(0xdf);
-		LCD1602_WriteDat('C');
-
-		printf("S:%d    ",(unsigned int)pid.Sv);
-		printf("P:%d.%-3d    ",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
-		printf("O:%d.%-3d\r",(unsigned int)pid.OUT,(unsigned int)((pid.OUT-(unsigned int)pid.OUT)*1000));
-		/*
-		sprintf(str, "S:%d",(unsigned int)pid.Sv);
-		LCD1602_ShowStr(0,0,str);
-		sprintf(str, "P:%d.%-3d",(unsigned int)pid.Pv,(unsigned int)((pid.Pv-(unsigned int)pid.Pv)*1000));
-		LCD1602_ShowStr(0,1,str);
-		sprintf(str, "O:%d.%-3d",(unsigned int)pid.OUT,(unsigned int)((pid.OUT-(unsigned int)pid.OUT)*1000));
-		LCD1602_ShowStr(7,1,str);
-	*/
 	}
 
 }

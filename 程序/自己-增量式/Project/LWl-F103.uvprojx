@@ -603,6 +603,11 @@
               <FileType>1</FileType>
               <FilePath>..\User\timer_init.c</FilePath>
             </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\key.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
